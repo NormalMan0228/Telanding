@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}기록실 / Telemera{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{{ url_for('static', filename='css/pages.css') }}">{% endblock %}
+{% block scripts %}<script type="module" src="{{ url_for('static', filename='js/archive-page.js') }}"></script>{% endblock %}
+{% block content %}
+<section class="document-page">
+  <a class="back-link" href="{{ url_for('explore') }}">← 병동으로 복귀</a>
+  <div class="eyebrow">A: / TELEMERA / ARCHIVE</div>
+  <h1>아직 지워지지 않은 것들.</h1>
+  <p class="page-lead">읽을 수 있는 파일만 남겼다.<br>나머지는 복구 중이다.</p>
+  <div class="file-list">
+    <details open><summary><span>001 / NIGHT_SHIFT.TXT</span><small>당직 메모 / 열기</small></summary><div><p>모니터는 끄지 말 것.<br>빈 병상을 세지 말 것.<br>바닥에 남은 기록을 회수할 것.</p><p class="muted">서명란은 비어 있다.</p></div></details>
+    <details><summary><span>002 / UNIT_00.LOG</span><small>기체 기록 / 열기</small></summary><div><p>머리: CRT 표시 장치<br>몸통: 금속 섀시 / 내부 냉각팬<br>관절: 전동 액추에이터<br>등록명: 없음</p><p>얼굴이 있어야 할 자리에서 커서가 깜박였다.</p></div></details>
+    <details><summary><span>003 / WORKS.DIR</span><small>게임 보관함 / 열기</small></summary><div><p>아직 만들어지는 중인 게임들의 자리.</p><a class="text-link" href="{{ url_for('games') }}">게임 공개 정보 확인 →</a></div></details>
+  </div>
+  <div class="document-end">END OF DIRECTORY <span>3 ENTRIES</span></div>
+  <section class="recovered-section"><span class="eyebrow">RECOVERED / THIS VISIT</span><h2>회수한 조각.</h2><p id="recovery-status" class="muted">아직 회수한 기록이 없다. 방바닥의 작은 종이를 찾아보자.</p><div id="recovered-files" class="file-list"></div></section>
+  <section id="equipment-section" class="recovered-section" hidden><h2>이름을 알게 된 기계들.</h2><ul id="equipment-list"></ul></section>
+  <details id="signal-file" hidden><summary><span>EXTRA / NEXT_SIGNAL.MSG</span><small>보조 회선에서 도착한 메시지</small></summary><div><p>“여기까지 와 줘서 고마워.<br>다음에는 우리 게임 안에서 만나자.”</p><a class="text-link" href="{{ url_for('games') }}">Telemera 게임 보관함 →</a></div></details>
+</section>
+{% endblock %}

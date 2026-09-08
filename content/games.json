@@ -1,0 +1,15 @@
+{
+  "studio": "Telemera",
+  "games": [
+    {
+      "id": "next-signal",
+      "title": "다음 게임",
+      "eyebrow": "NEXT SIGNAL / 001",
+      "status": "공개 준비 중",
+      "description": "아직 문 너머에 있는 이야기. 새로운 게임 소식과 영상은 이곳에 모입니다.",
+      "store_url": null,
+      "trailer_url": null,
+      "release": "추후 공개"
+    }
+  ]
+}

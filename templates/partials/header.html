@@ -1,0 +1,9 @@
+<header>
+  <a class="logo" href="{{ url_for('explore') }}" aria-label="Telemera 홈"><span class="logo-text" data-text="Telemera">Telemera</span></a>
+  <span class="header-note">UNREGISTERED UNIT // CONNECTION NOT CLOSED</span>
+  <nav class="site-nav" aria-label="페이지 메뉴">
+    <a href="{{ url_for('explore') }}" {% if request.endpoint == 'explore' %}aria-current="page"{% endif %}>병동 <small>/ EXPLORE</small></a>
+    <a href="{{ url_for('games') }}" {% if request.endpoint == 'games' %}aria-current="page"{% endif %}>게임 <small>/ GAMES</small></a>
+    <a href="{{ url_for('records') }}" {% if request.endpoint == 'records' %}aria-current="page"{% endif %}>기록실 <small>/ ARCHIVE</small></a>
+  </nav>
+</header>

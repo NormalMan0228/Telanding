@@ -1,0 +1,35 @@
+<section class="game-shell" aria-label="인터랙티브 탐험 공간">
+<div class="game-bar">
+<span>
+<i>
+</i> TELEMERA <span class="bar-muted">/ WARD_OS v0.03</span>
+</span>
+<a class="cabinet-shortcut" href="#upcoming">게임 보관함 ↗</a><span>CCTV · <span id="signal-status">RECEIVING…</span>
+</span>
+</div>
+<div class="viewport">
+<canvas id="world" width="640" height="480" tabindex="0" aria-label="바닥이나 물건을 클릭하면 작은 기계가 다가갑니다. 방향키 또는 WASD로 8방향 이동, E키로 조사. 좌우 문으로 다른 방에 갈 수 있습니다.">
+</canvas>
+<div id="signal-loss" class="signal-loss" hidden><span>NO CARRIER</span><p>작은 기계의 목소리가 들리지 않는다.</p><button id="reconnect">플러그 다시 꽂기 ↵</button></div>
+<div class="world-label">
+<span id="world-number">WARD 01</span>
+<strong id="world-name">01 / 눈을 빌려주는 대기실</strong>
+</div>
+<a class="collect-label" href="{{ url_for('records') }}" aria-label="회수한 기록 열기">▤ <span id="collected">0</span> / 5</a>
+<div class="scene-caption" id="scene-caption">바닥이나 물건을 눌러 봐. 내가 다가갈게.</div>
+<button id="interact" class="interact">E <span>가까운 오브젝트 살펴보기</span>
+</button>
+<div class="dpad" aria-label="8방향 이동">
+<button data-move="up-left" aria-label="왼쪽 위">↖</button><button data-move="up" aria-label="위">↑</button><button data-move="up-right" aria-label="오른쪽 위">↗</button>
+<button data-move="left" aria-label="왼쪽">←</button><span aria-hidden="true">·</span><button data-move="right" aria-label="오른쪽">→</button>
+<button data-move="down-left" aria-label="왼쪽 아래">↙</button><button data-move="down" aria-label="아래">↓</button><button data-move="down-right" aria-label="오른쪽 아래">↘</button>
+</div>
+</div>
+<div class="game-bottom">
+<span>
+<kbd>CLICK</kbd> 다가가기 <span class="divider">/</span> <kbd>WASD</kbd> 이동 <span class="divider">/</span> <kbd>E</kbd> 조사</span>
+<div>
+<button id="motion" aria-pressed="false">≈ MOTION ON</button>
+</div>
+</div>
+</section>

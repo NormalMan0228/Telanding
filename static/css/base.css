@@ -1,0 +1,108 @@
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Gowun+Batang:wght@400;700&display=swap");
+:root {
+  color-scheme: dark;
+  --bg: #080b0a;
+  --panel: #10160f;
+  --ink: #bec5b4;
+  --muted: #8d9c82;
+  --line: #303a30;
+  --accent: #a1b58a;
+  --mono: "IBM Plex Mono", "Courier New", monospace;
+  --serif: "Gowun Batang", Georgia, serif;
+  --pixel: "Galmuri11", "Courier New", monospace;
+  --dialog: "Galmuri14", "Gowun Batang", serif;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background: var(--bg);
+  background-image: radial-gradient(
+    ellipse at 50% 25%,
+    #17201855,
+    transparent 65%
+  );
+  color: var(--ink);
+  font-family: var(--mono);
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+[hidden] {
+  display: none !important;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+button:focus-visible,
+a:focus-visible,
+canvas:focus-visible,
+summary:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+.eyebrow {
+  font: 11px var(--mono);
+  letter-spacing: 0.8px;
+  color: #869c7b;
+}
+.dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  background: #91a879;
+  box-shadow: 0 0 8px #8caf5666;
+  margin-right: 8px;
+}
+.skip {
+  position: fixed;
+  top: -100px;
+  left: 10px;
+  z-index: 10;
+  background: #26391e;
+  color: #cad6bd;
+  padding: 12px;
+}
+.skip:focus {
+  top: 10px;
+}
+button:hover,
+a:hover {
+  color: #d0dbbf;
+}
+.muted {
+  color: var(--muted);
+}
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    scroll-behavior: auto !important;
+    transition: none !important;
+  }
+}
+[data-motion="off"] *,
+[data-motion="off"] *::before,
+[data-motion="off"] *::after {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}

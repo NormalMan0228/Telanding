@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <defs><linearGradient id="shell" x2="0" y2="1"><stop stop-color="#a2aa87"/><stop offset=".45" stop-color="#7d9276"/><stop offset="1" stop-color="#435d4b"/></linearGradient></defs>
+  <path d="M44 31c17 3 2 9 9 12s-7 6 0 9-6 5-13 4" fill="none" stroke="#12281e" stroke-width="5"/>
+  <path d="M44 31c17 3 2 9 9 12s-7 6 0 9-6 5-13 4" fill="none" stroke="#809575" stroke-width="2"/>
+  <path d="M11 27h31l6 23H6z" fill="#172d23" stroke="#617e5d"/>
+  <path d="M12 29h28l4 16H9z" fill="#3c5845"/>
+  <circle cx="26" cy="37" r="9" fill="#1d3528" stroke="#839476"/><circle cx="26" cy="37" r="4" fill="#a5ad8a"/>
+  <g fill="#819272"><circle cx="26" cy="30" r="1.5"/><circle cx="32" cy="34" r="1.5"/><circle cx="31" cy="42" r="1.5"/><circle cx="21" cy="42" r="1.5"/><circle cx="20" cy="34" r="1.5"/></g>
+  <path d="M6 21c3-12 35-12 41 0l-2 8-11-1-1-6H20l-1 6-11 1z" fill="#10241b"/>
+  <path d="M6 18c3-12 35-12 41 0l-2 8-11-1-1-6H20l-1 6-11 1z" fill="url(#shell)" stroke="#b0b596"/>
+  <path d="M15 13c7-3 18-3 25 0M8 21l11-1M34 20l11 1" fill="none" stroke="#bdd0a1" stroke-opacity=".45"/><path d="M13 50h25" stroke="#0b1e15" stroke-width="2"/>
+</svg>

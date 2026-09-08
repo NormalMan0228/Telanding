@@ -1,0 +1,17 @@
+{
+  "name": "telemera",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "render:qa": "node scripts/render-character.mjs && node scripts/render-scenes.mjs",
+    "render:audio": "node scripts/render-audio.mjs",
+    "check:audio-stress": "node scripts/render-audio.mjs --stress",
+    "profile:render": "node scripts/profile-render.mjs"
+  },
+  "devDependencies": {
+    "@napi-rs/canvas": "^0.1.80",
+    "galmuri": "^2.39.2",
+    "node-web-audio-api": "^2.2.0"
+  }
+}

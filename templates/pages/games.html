@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Games / Telemera{% endblock %}
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/devices.css') }}">
+{% endblock %}
+{% block content %}
+<section class="document-page game-directory">
+  <a class="back-link" href="{{ url_for('explore') }}">← 작은 기계에게 돌아가기</a>
+  <div class="directory-heading">
+    <div><span class="eyebrow">TELEMERA / GAME DIRECTORY</span><h1>게임 보관함.</h1></div>
+    <span class="directory-stamp" aria-hidden="true">KEEP<br>WAITING<br><i>↳</i></span>
+  </div>
+  <p class="page-lead">아직 열리지 않은 문들.<br>새로운 게임의 소식은 이곳에서 만납니다.</p>
+  {% for game in catalog.games %}
+  <article id="{{ game.id }}" class="readme game-entry">
+    <div class="release-case-label"><span>TELEMERA</span><span>FILE {{ "%03d"|format(loop.index) }}</span></div>
+    <div class="release-introduction">
+      <div class="release-floppy" aria-hidden="true"><span>{{ "%03d"|format(loop.index) }}</span><i></i></div>
+      <div><span class="release-status">{{ game.eyebrow }} / {{ game.status }}</span><h2>{{ game.title }}</h2><p>{{ game.description }}</p></div>
+    </div>
+    <dl class="release-details">
+      <div><dt>출시</dt><dd>{{ game.release }}</dd></div>
+      <div><dt>스토어</dt><dd>{% if game.store_url %}<a href="{{ game.store_url }}" rel="noopener noreferrer" target="_blank">스토어 방문 ↗</a>{% else %}추후 공개{% endif %}</dd></div>
+      <div><dt>영상</dt><dd>{% if game.trailer_url %}<a href="{{ game.trailer_url }}" rel="noopener noreferrer" target="_blank">트레일러 보기 ↗</a>{% else %}추후 공개{% endif %}</dd></div>
+    </dl>
+    <details class="release-drawer">
+      <summary><span>접수된 쪽지</span><small>손잡이 당기기 ↓</small></summary>
+      <div><p>보관함까지 와 줘서 고마워요.<br>이상한 곳에서 만난 이야기는 조금 오래 남았으면 좋겠어요.</p><span class="note-signature">— Telemera의 접수원</span></div>
+    </details>
+    <a class="text-link" href="{{ url_for('explore') }}">기다리는 동안 작은 기계를 만나기 →</a>
+  </article>
+  {% endfor %}
+</section>
+{% endblock %}

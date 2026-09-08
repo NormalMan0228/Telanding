@@ -1,0 +1,303 @@
+.document-page {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 44px 0 85px;
+  min-height: 80vh;
+}
+.missing-room {
+  padding-top: max(80px, 12vh);
+}
+.missing-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+.recovered-section {
+  margin: 52px 0 30px;
+}
+.recovered-section h2 {
+  font: 27px var(--serif);
+  margin: 15px 0 20px;
+}
+.recovered-section > p {
+  font: 14px/1.8 var(--serif);
+}
+.recovered-section details p {
+  white-space: pre-line;
+}
+.recovered-section ul {
+  padding-left: 20px;
+  color: #a4b398;
+  line-height: 2;
+  font: 15px/2 var(--serif);
+}
+.back-link {
+  display: block;
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 48px;
+}
+.document-page h1 {
+  font: 400 clamp(32px, 4vw, 54px) / 1.3 var(--serif);
+  letter-spacing: -2px;
+  margin: 24px 0;
+}
+.page-lead {
+  font: 18px/1.9 var(--serif);
+  color: #95aa89;
+  margin-bottom: 42px;
+}
+.file-list {
+  border-top: 1px solid var(--line);
+}
+details {
+  border-bottom: 1px solid var(--line);
+  background: #10160f;
+}
+summary {
+  cursor: pointer;
+  padding: 23px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  font-size: 14px;
+}
+summary::before {
+  content: "+";
+  color: var(--accent);
+  margin-right: 6px;
+}
+details[open] summary::before {
+  content: "−";
+}
+summary span {
+  flex: 1;
+}
+summary small {
+  font-size: 12px;
+  color: var(--muted);
+}
+details > div {
+  padding: 0 30px 24px;
+  border-left: 2px solid #546d44;
+  margin-left: 25px;
+  font: 16px/1.9 var(--serif);
+}
+.document-end {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  margin-top: 28px;
+  font-size: 11px;
+  color: var(--muted);
+}
+.readme {
+  border: 1px solid var(--line);
+  padding: 30px;
+  background: #10160f;
+}
+.readme h2 {
+  font: 22px var(--serif);
+  margin: 10px 0 20px;
+}
+.readme p {
+  font: 16px/2 var(--serif);
+  color: #a0b194;
+  margin-bottom: 28px;
+}
+.text-link {
+  display: inline-block;
+  border-bottom: 1px solid #637b50;
+  font-size: 14px;
+  padding-bottom: 7px;
+}
+@media (max-width: 650px) {
+  .document-page {
+    padding-top: 30px;
+  }
+  .back-link {
+    margin-bottom: 35px;
+  }
+  summary {
+    padding: 18px 12px;
+    flex-wrap: wrap;
+    font-size: 12px;
+  }
+  summary small {
+    width: 100%;
+    padding-left: 25px;
+  }
+  details > div {
+    padding: 0 15px 18px;
+    margin-left: 14px;
+  }
+  .readme {
+    padding: 22px;
+  }
+  .document-end {
+    font-size: 9px;
+  }
+}
+.recovered-section details p,
+#signal-file p {
+  font: 15px/1.9 var(--dialog);
+}
+
+/* The public directory is a file cabinet, with release information always visible. */
+.directory-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+.directory-stamp {
+  color: #8a947455;
+  border: 2px solid #64745855;
+  padding: 12px 18px;
+  font: 12px/1.3 var(--mono);
+  transform: rotate(8deg);
+  letter-spacing: 2px;
+}
+.directory-stamp i {
+  float: right;
+  font-style: normal;
+  font-size: 22px;
+}
+.game-directory .game-entry {
+  position: relative;
+  padding: 0 30px 30px;
+  background: linear-gradient(120deg, #19261e, #0f1915);
+  border-color: #4c6050;
+  box-shadow:
+    5px 6px #030806,
+    inset 0 0 0 4px #23372a66;
+}
+.release-case-label {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px 0;
+  border-bottom: 1px solid #475b47;
+  font: 10px var(--mono);
+  color: #85947d;
+  letter-spacing: 2px;
+}
+.release-introduction {
+  display: grid;
+  grid-template-columns: 110px minmax(0, 1fr);
+  gap: 30px;
+  align-items: center;
+  padding-top: 30px;
+}
+.game-directory .release-introduction h2 {
+  margin: 14px 0;
+  font: 32px var(--serif);
+}
+.game-directory .release-introduction p {
+  margin: 0;
+}
+.release-floppy {
+  position: relative;
+  width: 104px;
+  height: 114px;
+  border: 1px solid #809074;
+  background: linear-gradient(130deg, #5f7561, #294a3c);
+  border-radius: 3px 13px 3px 3px;
+  transform: rotate(-5deg);
+  box-shadow: 4px 5px #07110b;
+}
+.release-floppy span {
+  display: block;
+  margin: 13px 9px;
+  background: #9ea384;
+  color: #3a513b;
+  font: 26px var(--mono);
+  padding: 5px 9px 10px;
+  border-bottom: 5px solid #6a805f;
+}
+.release-floppy i {
+  position: absolute;
+  bottom: 0;
+  left: 23px;
+  width: 58px;
+  height: 27px;
+  background: linear-gradient(90deg, #72846f, #a3af91, #607862);
+}
+.release-floppy i::after {
+  content: "";
+  position: absolute;
+  width: 12px;
+  height: 20px;
+  top: 4px;
+  left: 28px;
+  background: #243d30;
+}
+.release-drawer {
+  margin: 0 0 28px;
+  border: 1px solid #52694f;
+  background: #263b2c;
+  box-shadow: 0 4px #08170e;
+}
+.release-drawer summary {
+  padding: 16px 18px;
+  font: 13px var(--pixel);
+}
+.release-drawer summary::before {
+  content: "";
+  width: 27px;
+  height: 10px;
+  border: 2px solid #8d9b7a;
+  border-bottom-width: 4px;
+  border-radius: 2px;
+  flex: none;
+  box-shadow: 0 2px #0a1a0f;
+}
+.release-drawer[open] summary::before {
+  content: "";
+  border-color: #b4bc95;
+}
+.release-drawer summary small {
+  font: 10px var(--mono);
+}
+.release-drawer > div {
+  margin: 0 16px 17px;
+  padding: 20px;
+  border: 1px solid #4c6147;
+  background: #15291d;
+  color: #a4b395;
+}
+.game-directory .release-drawer p {
+  margin: 0 0 14px;
+  font: 15px/1.9 var(--dialog);
+}
+.note-signature {
+  font: 12px var(--dialog);
+  color: #899e7a;
+}
+@media (max-width: 650px) {
+  .directory-stamp {
+    display: none;
+  }
+  .game-directory .game-entry {
+    padding: 0 20px 24px;
+  }
+  .release-introduction {
+    grid-template-columns: 72px minmax(0, 1fr);
+    gap: 18px;
+  }
+  .release-floppy {
+    transform: rotate(-5deg) scale(0.65);
+    transform-origin: left center;
+  }
+  .game-directory .release-introduction h2 {
+    font-size: 25px;
+  }
+  .release-drawer summary small {
+    width: auto;
+    padding: 0;
+  }
+  .release-drawer > div {
+    margin: 0 10px 12px;
+    padding: 14px;
+  }
+}

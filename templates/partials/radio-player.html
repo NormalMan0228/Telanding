@@ -1,0 +1,12 @@
+<div class="radio-player" aria-label="Telemera 원내 방송">
+  <button id="sound" aria-pressed="false" aria-label="원내 방송 재생 또는 일시정지">▶ PLAY</button>
+  <button id="track-prev" class="track-step" aria-label="이전 곡">◂</button>
+  <button id="track-next" class="track-step" aria-label="다음 곡">▸</button>
+  <span id="audio-time" class="audio-time" aria-label="재생 경과 시간">00:00</span>
+  <div class="signal-track" aria-hidden="true">{% for _ in range(20) %}<i></i>{% endfor %}</div>
+  <label class="volume-control">VOL <input id="volume" type="range" min="0" max="100" value="35" aria-label="방송 음량"></label>
+  <span class="track-name">
+    <select id="track-select" aria-label="음원 선택"></select>
+    <small id="track-mood">a small machine learning to sleep</small>
+  </span>
+</div>

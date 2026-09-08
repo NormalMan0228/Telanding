@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/explorer.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/devices.css') }}">
+{% endblock %}
+{% block scripts %}
+<script type="module" src="{{ url_for('static', filename='js/game/index.js') }}"></script>
+{% endblock %}
+{% block content %}
+<h1 class="sr-only">Telemera — 작은 기계와 아직 태어나지 않은 게임들</h1>
+<div class="landing-instrument">
+  <div class="play-column">
+    {% include 'partials/game-view.html' %}
+    {% include 'partials/radio-player.html' %}
+  </div>
+  {% include 'partials/devices.html' %}
+</div>
+{% include 'partials/game-cabinet.html' %}
+{% include 'partials/dialog.html' %}
+{% endblock %}
