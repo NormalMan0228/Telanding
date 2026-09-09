@@ -1,5 +1,5 @@
 <section id="upcoming" class="game-cabinet" aria-labelledby="cabinet-title">
-  <div class="cabinet-header"><div><span class="eyebrow">TELEMERA / GAMES IN THE MAKING</span><h2 id="cabinet-title">다음 신호를 기다리는 중.</h2></div><a href="{{ url_for('games') }}">게임 보관함 열기 ↗</a></div>
+  <div class="cabinet-header"><div><span class="eyebrow">TELEMERA / GAMES</span><h2 id="cabinet-title">게임</h2></div><a href="{{ url_for('games') }}">게임 보관함 열기 ↗</a></div>
   {% for game in catalog.games %}
   <article class="upcoming-game"><button data-release-disc class="sealed-disc" aria-label="미발매 디스크 조사"><span class="disc-label">TELEMERA<br>{{ "%03d"|format(loop.index) }}</span><i></i><small>UNRELEASED</small></button><div class="game-description"><span class="release-status">● {{ game.status }}</span><h3>{{ game.title }}</h3><p>{{ game.description }}</p><a class="game-link" href="{{ url_for('games') }}#{{ game.id }}">공개 정보 확인 →</a></div><span class="cabinet-number" aria-hidden="true">{{ "%03d"|format(loop.index) }}</span></article>
   {% endfor %}

@@ -1,14 +1,13 @@
-export const STRIDE_RATE = 4.1;
+export const STRIDE_RATE = 3.2;
+export const STEP_LENGTH = 5.4;
+export const STEP_HEIGHT = 3.2;
 
-/** The planted half of a step counters body travel; the return half clears the floor. */
-export function footPose(phase, amplitude) {
+/** Rounded endpoints keep the little machine's feet from snapping at contact. */
+export function footPose(phase, amplitude = STEP_LENGTH) {
   const cycle = ((phase % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
-  if (cycle < Math.PI)
-    return { forward: amplitude * (1 - (2 * cycle) / Math.PI), lift: 0 };
-  const t = (cycle - Math.PI) / Math.PI;
   return {
-    forward: amplitude * (-1 + 2 * t * t * (3 - 2 * t)),
-    lift: Math.sin(t * Math.PI) * 4.2,
+    forward: -Math.cos(cycle) * amplitude,
+    lift: Math.max(0, Math.sin(cycle)) * STEP_HEIGHT,
   };
 }
 
@@ -42,7 +41,7 @@ export function advanceLocomotion(player, oldX, oldZ, dt = 1 / 60) {
   return true;
 }
 
-/** A palm-sized diagnostic companion. Every view uses the same 3D joint geometry. */
+/** An asymmetric articulated instrument with no human facial expression. */
 export function drawCharacter(
   ctx,
   p,
@@ -60,23 +59,22 @@ export function drawCharacter(
     cos = Math.cos(angle);
   const motion = quiet ? 0 : (player.motion ?? (moving ? 1 : 0));
   const reach = quiet ? 0 : Math.sin(Math.PI * (player.reach ?? 0));
-  const bob = Math.abs(Math.sin(player.gait || 0)) * 0.7 * motion;
-  const size = p.scale * 1.12;
-  const amplitude = (Math.PI * (p.unit ?? 40)) / (2 * STRIDE_RATE * size);
+  const bob = Math.abs(Math.sin(player.gait || 0)) * 0.15 * motion;
+  const size = p.scale * 1.26;
   const step = (sign) => {
     const pose = footPose(
       (player.gait || 0) + (sign < 0 ? Math.PI : 0),
-      amplitude,
+      STEP_LENGTH,
     );
     return { forward: pose.forward * motion, lift: pose.lift * motion };
   };
   ctx.save();
-  ctx.translate(Math.round(p.x), Math.round(p.y));
+  ctx.translate(p.x, p.y);
   ctx.scale(size, size);
   ctx.imageSmoothingEnabled = false;
   const project = (x, y, z) => ({
-    x: Math.round(x * sin + z * cos),
-    y: Math.round(-y + (-x * cos + z * sin) * (p.depthScale ?? 0.55)),
+    x: x * sin + z * cos,
+    y: -y + (-x * cos + z * sin) * (p.depthScale ?? 0.55),
     depth: -x * cos + z * sin,
   });
   const polygon = (points, color) => {
@@ -174,6 +172,24 @@ export function drawCharacter(
     ctx.ellipse(q.x, q.y, rx, ry, 0, 0, Math.PI * 2);
     ctx.fill();
   };
+  // Faceted ovoid shells share the limb projection, so all directions keep volume.
+  const shell = (x, y, z, rx, ry, rz) => {
+    const surfaces = [], segments = 14, rings = 10;
+    const point = (r, s) => {
+      const latitude = -Math.PI / 2 + r * Math.PI / rings;
+      const longitude = s * Math.PI * 2 / segments;
+      return [x + Math.cos(latitude) * Math.cos(longitude) * rx,
+        y + Math.sin(latitude) * ry,
+        z + Math.cos(latitude) * Math.sin(longitude) * rz];
+    };
+    for(let r=0;r<rings;r++)for(let s=0;s<segments;s++){
+      const vertices=[point(r,s),point(r,s+1),point(r+1,s+1),point(r+1,s)];
+      const light=0.55+0.18*Math.sin((r+0.5)*Math.PI/rings)+0.14*Math.cos((s+0.5)*Math.PI*2/segments-0.8);
+      surfaces.push({vertices,depth:vertices.reduce((sum,v)=>sum+project(...v).depth,0),
+        color:`rgb(${Math.round(180*light)},${Math.round(193*light)},${Math.round(172*light)})`});
+    }
+    surfaces.sort((a,b)=>a.depth-b.depth).forEach(s=>face(s.vertices,s.color));
+  };
   // A two-joint mechanical leg follows each foot without stretching its rods.
   ctx.fillStyle = "#02060780";
   ctx.beginPath();
@@ -183,12 +199,8 @@ export function drawCharacter(
   for (const sign of [-1, 1]) {
     const { forward, lift } = step(sign);
     const hip = 17 + bob,
-      dy = 3 + lift - hip,
-      distance = Math.hypot(dy, forward),
-      segment = Math.max(7.5 + motion * 3, distance / 2 + 0.01),
-      bend = Math.sqrt(segment * segment - (distance * distance) / 4),
-      kneeY = hip + dy / 2 + (forward / distance) * bend,
-      kneeZ = forward / 2 - (dy / distance) * bend;
+      kneeY = 10 + bob * 0.5 + lift * 0.42,
+      kneeZ = 2 + forward * 0.42;
     limbs.push({
       depth: project(sign * 4, 0, forward * 0.5).depth,
       draw: () => {
@@ -200,7 +212,7 @@ export function drawCharacter(
           3.3,
           "#819187",
         );
-        cube(sign * 4, lift, forward + 1, 5, 3, 7, [
+        cube(sign * 4, lift, forward + 0.7, 5, 3, 6, [
           "#a5afa0",
           "#677f77",
           "#526b65",
@@ -213,7 +225,7 @@ export function drawCharacter(
   const arms = [];
   for (const sign of [-1, 1]) {
     const greeting = sign === (cos >= 0 ? -1 : 1) ? reach : 0;
-    const swing = -step(sign).forward * 0.28 + greeting * 9,
+    const swing = -step(sign).forward * 0.42 + greeting * 9,
       depth = project(sign * 8, 0, 0).depth;
     arms.push({
       depth,
@@ -230,76 +242,64 @@ export function drawCharacter(
           3,
           "#a2b39e",
         );
-        ellipse(sign * 9, 15 + bob + greeting * 10, swing, 2.6, 2.4, "#d1d0b5");
+        const handY = 15 + bob + greeting * 10;
+        if (sign < 0) {
+          rod([sign * 9, handY + 2, swing], [sign * 10, handY - 4, swing], 1.4, "#989d8f");
+        } else {
+          ellipse(sign * 9, handY, swing, 1.5, 1.5, "#9b8660");
+          rod(
+            [sign * 9, handY, swing],
+            [sign * 11, handY + 1.8, swing + 0.5],
+            1.3,
+            "#c2ae7a",
+          );
+          rod(
+            [sign * 9, handY, swing],
+            [sign * 11, handY - 1.2, swing + 0.5],
+            1.3,
+            "#c2ae7a",
+          );
+        }
       },
     });
   }
   // The far arm belongs behind the torso in profile and diagonal views.
   arms.filter((a) => a.depth < -0.01).forEach((a) => a.draw());
-  cube(0, 15 + bob, 0, 12, 13, 11, [
-    "#bcc5ae",
-    "#7f9990",
-    "#718c84",
-    "#d7d6bd",
-  ]);
+  shell(0, 22 + bob, 0, 7.2, 8.5, 6.2);
   cube(0, 27 + bob, 0, 4, 4, 4, ["#9eaea0", "#6b8579", "#6b8579"]);
-  // Rounded corners are formed by a beveled silhouette, not a shear of a front sprite.
-  cube(0, 32 + bob, 0, 19, 13, 17, [
-    "#d2d3b9",
-    "#9dad9b",
-    "#82978b",
-    "#e4dfc5",
-  ]);
-  cube(0, 30 + bob, 0, 15, 2, 15, ["#b5c3ae", "#819d91", "#6c877e"]);
-  cube(0, 45 + bob, 0, 15, 2, 15, ["#cfdbc0", "#9bb5a0", "#819b8c"]);
+  shell(0, 42 + bob, 0, 7, 11.5, 7.5);
+  // Offset frame and hanging probe remain anatomical in all eight projections.
+  rod([4, 44 + bob, 0], [9, 47 + bob, 0], 1.2, "#8d8d7d");
+  rod([9, 47 + bob, 0], [9, 34 + bob, 0], 1.2, "#8d8d7d");
+  rod([9, 34 + bob, 0], [5, 30 + bob, 0], 1.2, "#8d8d7d");
+  rod([-5, 32 + bob, -6], [-8, 26 + bob, -7], 1.1, "#273e39");
   if (sin >= -0.01) {
     face(
-      [
-        [-7, 33 + bob, 8.6],
-        [7, 33 + bob, 8.6],
-        [7, 43 + bob, 8.6],
-        [-7, 43 + bob, 8.6],
-      ],
-      "#142f35",
+      [[-3, 35 + bob, 6.6], [3, 35 + bob, 6.6],
+       [3, 48 + bob, 6.6], [-3, 48 + bob, 6.6]], "#172526",
     );
-    const blink = !quiet && Math.sin(time * 0.63 + 1) > 0.996;
-    for (const eye of [-3.5, 3.5]) {
-      const q = project(eye, 38 + bob, 8.7);
-      ctx.fillStyle = "#a6f0d4";
-      ctx.fillRect(q.x - 1, q.y - (blink ? 0 : 2), 2, blink ? 1 : 4);
-    }
-    const q = project(0, 34.5 + bob, 8.7);
-    ctx.fillStyle = "#81bfb1";
-    ctx.fillRect(q.x - 1, q.y, 2, 1);
-    face(
-      [
-        [-3, 18 + bob, 5.6],
-        [3, 18 + bob, 5.6],
-        [3, 23 + bob, 5.6],
-        [-3, 23 + bob, 5.6],
-      ],
-      "#4e736a",
-    );
-    const light = project(0, 21 + bob, 5.7);
-    ctx.fillStyle = "#e8b86c";
-    ctx.fillRect(light.x, light.y, 2, 2);
+    // The moving index is instrumentation, not a pair of eyes.
+    const scanY = 40 + bob + (quiet ? 0 : Math.sin(time * 0.4) * 2);
+    rod([-2.5, scanY, 6.7], [2.5, scanY, 6.7], 1, "#adb5a3");
+    rod([0, 36 + bob, 6.7], [0, 47 + bob, 6.7], 1, "#626f68");
+    cube(3, 20 + bob, 5.8, 2, 6, 1, ["#7d8171", "#4d6057", "#6f7869"]);
   } else {
     for (let y = 34; y < 43; y += 3)
       face(
         [
-          [-5, y + bob, -8.6],
-          [5, y + bob, -8.6],
-          [5, y + 1 + bob, -8.6],
-          [-5, y + 1 + bob, -8.6],
+          [-5, y + bob, -6.6],
+          [1, y + bob, -6.6],
+          [1, y + 1 + bob, -6.6],
+          [-5, y + 1 + bob, -6.6],
         ],
         "#5c7a70",
       );
     cube(0, 18 + bob, -4.3, 5, 8, 2, ["#8fa797", "#5c7b70", "#b3c2a6"]);
+    rod([-3, 39 + bob, -8.8], [-6, 41 + bob, -9], 1.5, "#a58e60");
+    rod([-6, 41 + bob, -9], [-6, 37 + bob, -9], 1.5, "#a58e60");
   }
-  // A side dial gives profiles an identifiable face without inventing extra eyes.
   const dialSide = cos >= 0 ? -1 : 1;
-  ellipse(dialSide * 9.8, 37 + bob, 0, 2, 3, "#c49d63");
-  ellipse(dialSide * 9.8, 37 + bob, 0, 1, 1, "#5b695c");
+  rod([dialSide * 5.7, 35 + bob, 0], [dialSide * 5.7, 47 + bob, 0], 1.5, "#929585");
   arms
     .filter((a) => a.depth >= -0.01)
     .sort((a, b) => a.depth - b.depth)

@@ -17,12 +17,22 @@ def load_catalog():
 
 
 @app.get('/')
+def landing():
+    return render_template('pages/foyer.html')
+
+
+@app.get('/chamber')
+def chamber():
+    return render_template('pages/landing.html')
+
+
+@app.get('/play')
 def explore():
     return render_template('pages/explore.html')
 
 @app.get('/main')
 def main():
-    return redirect(url_for('explore'))
+    return redirect(url_for('landing'))
 
 @app.get('/records')
 def records():

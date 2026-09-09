@@ -1,5 +1,5 @@
 import { blocked } from "./navigation.js";
-import { MAP, palettes } from "./config.js";
+import { MAP, palettes, rooms } from "./config.js";
 import { EQUIPMENT } from "../content/archive.js";
 const KEY = "telemera.explorer.v2";
 export function persistSession(s) {
@@ -20,6 +20,7 @@ export function persistSession(s) {
         monitorAwake: s.monitorAwake,
         chairOccupied: s.chairOccupied,
         letterSent: s.letterSent,
+        apparatus: s.apparatus,
       }),
     );
   } catch {}
@@ -75,5 +76,11 @@ export function restoreSession(s) {
           saved.discovered.filter((id) => Object.hasOwn(EQUIPMENT, id)),
         ),
       ];
+    for (const [world, room] of rooms.entries())
+      for (const o of room.objects.filter((o) => o.id.startsWith("wall-"))) {
+        const key = `${world}:${o.id}`;
+        if (typeof saved.apparatus?.[key] === "boolean")
+          s.apparatus[key] = saved.apparatus[key];
+      }
   } catch {}
 }

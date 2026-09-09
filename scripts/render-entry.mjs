@@ -1,0 +1,10 @@
+import {createCanvas} from "@napi-rs/canvas";
+import {writeFileSync,mkdirSync} from "node:fs";
+import {drawEntry} from "../static/js/entry/machine.js";
+import {drawCurtain} from "../static/js/stages/curtain.js";
+mkdirSync("artifacts/qa",{recursive:true});
+const c=createCanvas(720,600),ctx=c.getContext("2d");
+drawEntry(ctx,[1,3,2],1,{power:true,contacts:[true,true,true],sliders:[30,70]});
+writeFileSync("artifacts/qa/entry-open.png",c.toBuffer("image/png"));
+const curtain=createCanvas(360,240);drawCurtain(curtain.getContext("2d"),360,240,.4);
+writeFileSync("artifacts/qa/curtain-volume.png",curtain.toBuffer("image/png"));

@@ -1,13 +1,13 @@
 <section class="device-panel" aria-label="외부 제어 장치">
-  <div class="panel-label">AUXILIARY / DO NOT UNPLUG</div>
+  <div class="panel-label">CONTROLS</div>
   <div class="signal-lights" aria-hidden="true"><i data-signal="eye"></i><i data-signal="pressure"></i><i data-signal="lamp"></i></div>
   <button class="observer-eye" id="observer-eye" aria-label="관찰자의 눈 작동"><span class="eye-lid"><span class="eye-pupil"></span></span></button>
-  <div class="eye-caption">IS SOMEONE THERE?</div>
+
   <div class="hardware-row"><label for="lamp-switch">SPECTRUM<br><small>병동 조명</small></label><button class="toggle-switch" id="lamp-switch" aria-pressed="false" aria-label="병동 조명 색 전환"><span></span></button></div>
   <div class="valve-control"><button id="pressure-valve" class="pressure-valve" aria-label="압력 밸브 조절"><span>✣</span></button><div>PRESSURE<br><output id="pressure-value">0 / 3</output></div></div>
   <div class="hardware-row"><button id="tuning-dial" class="tuning-dial" aria-label="다음 음원 주파수"><i></i></button><div>FREQUENCY<br><output id="dial-value">72.0</output></div></div>
-  <button id="receiver" class="receiver" aria-haspopup="dialog"><img class="receiver-drawing" src="{{ url_for('static', filename='images/receiver.svg') }}" width="64" height="64" alt=""><span>번호 없는 내선<small>PICK UP / EXT. 000</small></span></button>
+  <button id="receiver" class="receiver" aria-haspopup="dialog"><img class="receiver-drawing" src="{{ url_for('static', filename='images/receiver.svg') }}" width="64" height="64" alt=""><span>전화<small>PICK UP / EXT. 000</small></span></button>
   <div class="thermal-printer"><div class="printer-slot"></div><button id="printer-button">기록 출력 <span>↧</span></button><div id="paper-ticket" class="paper-ticket" hidden aria-live="polite"><small id="ticket-number">NO. 001</small><p id="ticket-message"></p><span class="ticket-barcode" aria-hidden="true"></span><button id="ticket-close" aria-label="출력한 종이 접어 두기">접어 두기 ↙</button></div></div>
-  <p id="device-status" class="device-status" aria-live="polite">관 안쪽은 조용하다.</p>
-  <button id="power-plug" class="power-plug" aria-pressed="true" aria-label="영상 회선 플러그 뽑기"><span class="plug-drawing" aria-hidden="true"><i></i></span><span id="plug-label">VIDEO LINK<br><small>뽑지 말 것.</small></span></button>
+  <p id="device-status" class="device-status" aria-live="polite"></p>
+  <button id="power-plug" class="power-plug" aria-pressed="true" aria-label="영상 회선 플러그 뽑기"><span class="plug-drawing" aria-hidden="true"><i></i></span><span id="plug-label">VIDEO LINK<br><small>ON</small></span></button>
 </section>

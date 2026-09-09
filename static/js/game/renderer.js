@@ -1,3 +1,6 @@
+import { drawInstallation } from "./installations.js";
+import { drawProp } from "./props.js";
+import { drawNPC } from "./npcs.js";
 import { drawMachine } from "./machines.js";
 import { worldUnit } from "./viewport.js";
 import { proximity } from "./navigation.js";
@@ -19,8 +22,8 @@ export function createRenderer(canvas, state) {
       Math.min(MAP.halfWidth - viewHalf, state.cameraX ?? state.player.x),
     );
     return {
-      x: Math.round(canvas.width / 2 + (x - camera) * unit),
-      y: Math.round(canvas.height * 0.68 + z * 22 - y * unit),
+      x: canvas.width / 2 + (x - camera) * unit,
+      y: canvas.height * 0.68 + z * 22 - y * unit,
       d: z,
       scale: 1,
       unit,
@@ -315,31 +318,12 @@ export function createRenderer(canvas, state) {
     ctx.imageSmoothingEnabled = true;
     const baseRoom = rooms[state.world];
     const room = state.lampMode
-      ? { ...baseRoom, wall: "#4b4058", floor: "#323343" }
+      ? { ...baseRoom, wall: "#2e2637", floor: "#292932" }
       : baseRoom;
     ctx.fillStyle = "#080d0d";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     if (state.powered === false) return;
-    const backdrop = state.backdrops?.[state.world] ?? state.backdrop;
-    if (backdrop) {
-      const left = project(-MAP.halfWidth, 0, 0).x,
-        right = project(MAP.halfWidth, 0, 0).x;
-      const floorBack = project(0, 0, -MAP.halfDepth).y;
-      const imageHeight = Math.max(
-        floorBack / 0.62,
-        (MAP.halfDepth * 44) / 0.38,
-      );
-      ctx.save();
-      ctx.filter = state.lampMode ? "hue-rotate(55deg)" : "none";
-      ctx.drawImage(
-        backdrop,
-        left,
-        floorBack - imageHeight * 0.62,
-        right - left,
-        imageHeight,
-      );
-      ctx.restore();
-    } else {
+    {
       surfaceKind = "wall";
       for (let x = -MAP.halfWidth; x < MAP.halfWidth; x += 3) {
         poly(
@@ -363,13 +347,6 @@ export function createRenderer(canvas, state) {
       }
       drawFaces();
       surfaceKind = "metal";
-      for (let x = -15; x < 17; x += 6) {
-        box(x, 3, -3.4, 2, 1.8, 0.1, ["#525e58", "#15272c", "#2a3b3d"]);
-        box(x, 3, -3.3, 0.06, 1.8, 0.12, ["#67756b", "#59645b", "#445347"]);
-        box(x, 3.85, -3.3, 2, 0.06, 0.12, ["#67756b", "#59645b", "#445347"]);
-        box(x, 5.4, -3.3, 1.7, 0.09, 0.15, ["#a1ad97", "#7a8e79", "#5e7761"]);
-      }
-      drawFaces();
       surfaceKind = "tile";
       for (let x = -MAP.halfWidth; x < MAP.halfWidth; x += 2)
         for (let z = -3.5; z < 3.5; z += 1) {
@@ -387,7 +364,7 @@ export function createRenderer(canvas, state) {
       surfaceKind = "metal";
     }
     surfaceKind = "metal";
-    // Ground contact remains subtle, so low-poly furniture belongs to the painted floor.
+    // Ground contact remains subtle, so low-poly furniture belongs to the tiled floor.
     const unit = worldUnit(canvas.width);
     const visible = (x, w = 0) => {
       const screen = project(x, 0, 0).x;
@@ -426,7 +403,9 @@ export function createRenderer(canvas, state) {
           glowContext.clearRect(0, 0, canvas.width, canvas.height);
           ctx = glowContext;
         }
-        if (drawMachine(o, { ctx, project, box, drawFaces }, state, t)) {
+        if (drawInstallation(o, { ctx, project, box, drawFaces }, state, t) || drawMachine(o, { ctx, project, box, drawFaces }, state, t)) {
+        } else if (drawNPC(o, {ctx,project}, state, t)) {
+        } else if (drawProp(o, {ctx,project,box,drawFaces}, state)) {
         } else if (o.kind === "bed") drawBed(o.x, o.z);
         else if (o.kind === "iv") drawIV(o.x, o.z);
         else if (o.kind === "cabinet") drawCabinet(o.x, o.z);

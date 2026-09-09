@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { TRACKS, eventFor, hz } from "../static/js/game/tracks.js";
 import { createAudio } from "../static/js/game/audio.js";
 
-function harness(saved = null) {
+function harness(saved = null, fixedTrack = null) {
   const elements = new Map(),
     events = new Map(),
     timers = new Map(),
@@ -156,6 +156,7 @@ function harness(saved = null) {
   globalThis.clearInterval = (id) => timers.delete(id);
   const messages = [],
     player = createAudio({
+      fixedTrack,
       say: (text) => messages.push(text),
       button: element("sound"),
     });
@@ -240,6 +241,18 @@ test("track controls stay synchronized, restore preferences without autoplay, an
   h.events.get("pagehide")();
 });
 
+test("landing audio stays fixed despite saved preferences and track controls", async () => {
+  const h=harness({track:"cassette",volume:30},"threshold");
+  assert.equal(h.player.getState().track,"threshold");
+  h.player.setTrack("standby");
+  h.element("track-next").handlers.click();
+  h.element("track-prev").handlers.click();
+  assert.equal(h.player.getState().track,"threshold");
+  await h.player.toggleSound();
+  assert.equal(h.player.getState().playing,true);
+  await h.player.toggleSound();
+  assert.equal(h.player.getState().playing,false);
+});
 test("tab suspension and an unavailable audio device recover without unhandled rejections", async () => {
   const h = harness();
   await h.player.toggleSound();

@@ -4,19 +4,19 @@
 <i>
 </i> TELEMERA <span class="bar-muted">/ WARD_OS v0.03</span>
 </span>
-<a class="cabinet-shortcut" href="#upcoming">게임 보관함 ↗</a><span>CCTV · <span id="signal-status">RECEIVING…</span>
+<a class="cabinet-shortcut" href="{{ url_for('games') }}">게임 ↗</a><span>CCTV · <span id="signal-status">ON</span>
 </span>
 </div>
 <div class="viewport">
-<canvas id="world" width="640" height="480" tabindex="0" aria-label="바닥이나 물건을 클릭하면 작은 기계가 다가갑니다. 방향키 또는 WASD로 8방향 이동, E키로 조사. 좌우 문으로 다른 방에 갈 수 있습니다.">
+<canvas id="world" width="640" height="480" tabindex="0" aria-label="클릭: 이동 및 작동. 방향키 또는 WASD: 8방향 이동. E: 작동. 좌우 출입구: 구역 이동.">
 </canvas>
-<div id="signal-loss" class="signal-loss" hidden><span>NO CARRIER</span><p>작은 기계의 목소리가 들리지 않는다.</p><button id="reconnect">플러그 다시 꽂기 ↵</button></div>
+<div id="signal-loss" class="signal-loss" hidden><span>NO CARRIER</span><button id="reconnect">플러그 다시 꽂기 ↵</button></div>
 <div class="world-label">
 <span id="world-number">WARD 01</span>
-<strong id="world-name">01 / 눈을 빌려주는 대기실</strong>
+<strong id="world-name">01</strong>
 </div>
-<a class="collect-label" href="{{ url_for('records') }}" aria-label="회수한 기록 열기">▤ <span id="collected">0</span> / 5</a>
-<div class="scene-caption" id="scene-caption">바닥이나 물건을 눌러 봐. 내가 다가갈게.</div>
+<span id="collected" hidden>0</span>
+<div class="scene-caption" id="scene-caption"></div>
 <button id="interact" class="interact">E <span>가까운 오브젝트 살펴보기</span>
 </button>
 <div class="dpad" aria-label="8방향 이동">

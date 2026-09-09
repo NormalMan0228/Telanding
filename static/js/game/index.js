@@ -1,5 +1,5 @@
 import { setupInput } from "./input.js";
-import { loadBackdrops } from "./backdrops.js";
+import { navigateTo } from "../page-transitions.js";
 import { canvasSize, worldUnit } from "./viewport.js";
 import { createDialog } from "./dialog.js";
 import { inspectEquipment, ROOM_MEMOS } from "../content/equipment.js";
@@ -42,10 +42,8 @@ const { show, element: dialog } = createDialog({
     state.walkTarget = null;
   },
 });
-const backdrops = loadBackdrops(
-  state,
-  (status) => ($("signal-status").textContent = status),
-);
+$("signal-status").textContent = "ON";
+state.showHint = (text) => show("NPC", text, "TELEMERA");
 
 const { project, unproject, render } = createRenderer(canvas, state);
 const { note, toggleSound, setTrack, onTrackChange, setAtmosphere } =
@@ -53,7 +51,7 @@ const { note, toggleSound, setTrack, onTrackChange, setAtmosphere } =
     say,
     button: $("sound"),
   });
-setupDevices({
+if (!document.getElementById("stage-panel")) setupDevices({
   state,
   show,
   note,
@@ -109,9 +107,15 @@ function activate(id) {
     if (object.kind !== "door") state.player.reach = 1;
   }
   note(440);
+  if (state.onInspect?.(id)) return;
+  if (object?.id.startsWith("wall-")) {
+    const key = `${state.world}:${id}`;
+    state.apparatus[key] = !state.apparatus[key];
+    return;
+  }
   if (id === "computer") {
     saveSession();
-    location.assign("/records");
+    navigateTo("/records");
   }
   if (id === "radio") toggleSound();
   if (id === "exit-right" || id === "exit-left") {
@@ -122,24 +126,17 @@ function activate(id) {
   const equipment = inspectEquipment(id, state);
   if (equipment) {
     if (equipment.track) setTrack(equipment.track);
-    show(
-      equipment.title,
-      equipment.text,
-      "TELEMERA / UNREGISTERED EQUIPMENT",
-      equipment.gamesLink,
-    );
+    if (equipment.gamesLink) { saveSession(); navigateTo("/games"); }
   }
   if (id === "sign")
-    show("당직자에게", ROOM_MEMOS[state.world], "NIGHT SHIFT / MEMO");
+    show("조작", ROOM_MEMOS[state.world], "CONTROLS");
 }
 
 function updateRoom() {
-  backdrops.refresh();
+
   $("world-number").textContent = `AREA 0${state.world + 1}`;
   $("world-name").textContent = palettes[state.world].name;
-  say(
-    "문을 지나 " + palettes[state.world].name.split(" / ")[1] + "에 도착했다.",
-  );
+  say("");
 }
 function resetExploration() {
   state.player.x = -14;
@@ -153,12 +150,12 @@ function resetExploration() {
   state.cameraX = state.player.x;
   $("world-number").textContent = "WARD 01";
   $("world-name").textContent = palettes[0].name;
-  say("세션 초기화. 접속자는 여전히 한 명.");
+  say("");
 }
 function interact() {
   if (!state.powered) return;
   if (state.activeObject) activate(state.activeObject.id);
-  else say("가까이 가서 테두리가 빛나는 물건을 눌러 봐.");
+  else say("E / 클릭: 작동");
 }
 $("interact").onclick = interact;
 const input = setupInput({ canvas, state, interact });
@@ -188,12 +185,12 @@ canvas.addEventListener("click", (e) => {
     return;
   }
   if (!clickIntent(state, target, object))
-    say("그쪽으로는 갈 수 없다. 다른 쪽을 눌러 보자.");
+    say("");
 });
 function frame(now) {
   const dt = state.last ? Math.min((now - state.last) / 1000, 0.04) : 0;
   state.last = now;
-  if (!document.hidden && !dialog.open && state.powered) {
+  if (!document.hidden && !dialog.open && state.powered && !state.introActive && !state.videoActive) {
     let dx = 0,
       dz = 0;
     if (state.keys.has("ArrowUp") || state.keys.has("w")) dz--;
@@ -241,29 +238,15 @@ function frame(now) {
         $("collected").textContent = count;
         note(170 + count * 20, 0.25);
         say(`기록 회수: ${count} / 5`);
-        if (count === 5)
-          show(
-            "다음 게임에서 만나자.",
-            "흩어진 기록 5개가 한 문장으로 이어졌다.\n\n“우리는 아직 만들어지는 중이야.”\n\n작은 기계가 빈 디스크를 가리킨다.\n새로운 이야기가 도착하면 보관함에 남겨 둘게.",
-            "TELEMERA / NEXT SIGNAL",
-            true,
-          );
+
       }
     }
     if (now > state.captionUntil) {
-      const caption = state.activeObject
-        ? "E를 누르거나 물건을 클릭해 살펴보기."
-        : state.hoverObject
-          ? "눌러 봐. 가까이 가서 살펴볼게."
-          : state.gems.some((g) => g.room === state.world && !g.taken)
-            ? "종이가 남아 있어. 누가 흘렸을까."
-            : state.gems.every((g) => g.taken)
-              ? "기록이 다 모였어. 게임 보관함을 열어 볼까."
-              : "옆방에도 무언가 있을까.";
+      const caption = state.activeObject ? "E / 클릭: 작동" : "";
       if ($("scene-caption").textContent !== caption)
         $("scene-caption").textContent = caption;
     }
-    state.cameraX += (state.player.x - state.cameraX) * Math.min(1, dt * 8);
+    state.cameraX += (state.player.x - state.cameraX) * (1 - Math.exp(-dt * 8));
     state.transition = Math.max(0, state.transition - dt);
     state.wasMoving = moving;
   } else if (!document.hidden) {
@@ -288,7 +271,7 @@ function frame(now) {
   render(state.clock, state.wasMoving && !dialog.open);
   requestAnimationFrame(frame);
 }
-say("바닥이나 물건을 눌러 봐. 내가 다가갈게.");
+say("");
 requestAnimationFrame(frame);
 
 export { frame, activate, resetExploration };

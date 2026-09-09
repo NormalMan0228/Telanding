@@ -170,7 +170,7 @@ test("all room records and door approaches are reachable around solid props", ()
       );
   }
 });
-test("nearby interaction, room-aware collection, scrolling renderer and page navigation", () => {
+test("nearby interaction, scrolling renderer and page navigation without invented records", () => {
   resetExploration();
   const computer = roomObjects(state).find((o) => o.id === "computer");
   state.player.x = computer.x;
@@ -189,14 +189,42 @@ test("nearby interaction, room-aware collection, scrolling renderer and page nav
     state.player.z = g.z;
     frame(100 + i * 40);
   }
-  assert.equal(state.gems.filter((g) => g.taken).length, 5);
-  assert.equal(element("info").open, true);
-  element("close-dialog").onclick();
+  assert.equal(state.gems.length, 0);
   activate("computer");
   assert.equal(location.destination, "/records");
   const restored = createState();
   restoreSession(restored);
-  assert.equal(restored.gems.filter((g) => g.taken).length, 5);
+  assert.equal(restored.gems.length, 0);
+});
+test("installations are solid, activate independently and survive navigation", () => {
+  for (let world = 0; world < rooms.length; world++) {
+    state.world = world;
+    for (const o of roomObjects(state).filter((o) => o.id.startsWith("wall-"))) {
+      assert.equal(o.solid, true);
+      assert.equal(blocked(state, o.x, o.z), true);
+      const key = `${world}:${o.id}`;
+      activate(o.id);
+      assert.equal(state.apparatus[key], true);
+      activate(o.id);
+      assert.equal(state.apparatus[key], false);
+    }
+  }
+  state.apparatus["0:wall-shutter"] = true;
+  persistSession(state);
+  const restored = createState();
+  restoreSession(restored);
+  assert.equal(restored.apparatus["0:wall-shutter"], true);
+});
+test("camera motion preserves projected object size and subpixel translation", () => {
+  const renderer=createRenderer(element("world"),state);
+  let previous=null;
+  for(let i=0;i<80;i++) {
+    state.cameraX=-2+i*.013;
+    const a=renderer.project(0,0,0),b=renderer.project(1,0,0);
+    assert.ok(Math.abs(b.x-a.x-a.unit)<1e-8);
+    if(previous)assert.ok(Math.abs(a.x-previous.x+.013*a.unit)<1e-8);
+    previous=a;
+  }
 });
 test("all room renderers run and stored collisions recover safely", () => {
   for (let i = 0; i < rooms.length; i++) {

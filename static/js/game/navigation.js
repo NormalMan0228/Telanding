@@ -56,6 +56,7 @@ export function travel(state, direction) {
   return rooms[state.world].name;
 }
 export function checkExit(state) {
+  if (state.stageMode) return false;
   if (Math.abs(state.player.z) > 0.8) return false;
   if (state.player.x > 17.25) {
     travel(state, 1);

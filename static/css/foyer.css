@@ -1,0 +1,11 @@
+body>header,body>footer{display:none}main{max-width:none;padding:0}
+.foyer{position:relative;min-height:100svh;overflow:hidden;display:grid;place-items:center;background:#080e0e}
+#foyer-field{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;image-rendering:auto;opacity:.8}
+.foyer-content{position:relative;width:min(78vw,1000px);padding:45px 0;text-align:center}
+.foyer-marker{font:11px monospace;letter-spacing:5px;color:#8a9a89}
+.foyer h1{font:clamp(72px,15vw,200px) var(--serif);letter-spacing:-.065em;font-weight:400;color:#c3c5b1;margin:20px 0 40px;text-shadow:2px 2px #34423a}
+.foyer-enter{display:inline-flex;align-items:center;justify-content:space-between;gap:90px;padding:18px 24px;border-block:1px solid #7b8a74;font:13px monospace;letter-spacing:5px;background:#0c1815b0;color:#c5cfb7;transition:background .25s}
+.foyer-enter:hover{background:#243c31}.foyer-enter:focus-visible{outline:2px solid #bdc5a6;outline-offset:8px}
+.foyer-foot{position:absolute;bottom:28px;left:5%;right:5%;display:flex;justify-content:space-between;font:10px monospace;letter-spacing:3px;color:#6a8070}
+.curtain-surface{position:absolute;inset:0;border:0;background:transparent;cursor:grab;width:100%;height:100%}.curtain-surface:focus-visible{outline:2px solid #a6b196;outline-offset:-10px}
+@media(max-width:600px){.foyer-content{width:90vw}.foyer h1{font-size:19vw}.foyer-enter{gap:65px}}

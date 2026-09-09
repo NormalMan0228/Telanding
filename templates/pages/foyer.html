@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/stages.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/foyer.css') }}">
+{% endblock %}
+{% block scripts %}<script type="module" src="{{ url_for('static', filename='js/foyer.js') }}"></script>{% endblock %}
+{% block content %}
+<section class="foyer" aria-labelledby="foyer-title">
+  <canvas id="foyer-field" width="900" height="700" aria-hidden="true"></canvas>
+  <div class="foyer-content"><span class="foyer-marker" aria-hidden="true">T / 00</span>
+    <h1 id="foyer-title">Telemera</h1>
+    <a class="foyer-enter" href="{{ url_for('chamber') }}">ENTER<span aria-hidden="true">↗</span></a>
+  </div>
+  <div class="foyer-foot" aria-hidden="true"><span>TELEMERA</span><span>00 — 03</span></div>
+</section>
+<div id="hospital-curtain" class="hospital-curtain" hidden>
+  <canvas id="curtain-canvas" aria-hidden="true"></canvas>
+  <button id="curtain-skip" class="curtain-surface" aria-label="병원 커튼 열기"></button>
+</div>
+{% endblock %}

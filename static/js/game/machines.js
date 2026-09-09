@@ -3,7 +3,7 @@ import { rooms } from "./config.js";
 export function drawMachine(o, tools, state, time) {
   const { ctx, project, box, drawFaces } = tools,
     p = project(o.x, 0, o.z),
-    unit = project(o.x + 1, 0, o.z).x - p.x;
+    unit = p.unit;
   const rect = (x, y, w, h, c) => {
     ctx.fillStyle = c;
     ctx.fillRect(
@@ -172,17 +172,8 @@ export function drawMachine(o, tools, state, time) {
     rect(-0.67 + tilt, 3.07, 1.35, 0.9, "#9a9b7b");
     rect(-0.6 + tilt, 3.02, 1.2, 0.75, "#6b7f6d");
     rect(-0.5 + tilt, 2.94, 0.98, 0.53, "#173a39");
-    const blink = !state.quiet && Math.sin(time * 0.53) > 0.997;
-    for (const x of [-0.25, 0.2])
-      rect(x + tilt, 2.77, 0.06, blink ? 0.025 : 0.16, "#aaceb1");
-    line(
-      [
-        [-0.1 + tilt, 2.53],
-        [0.03 + tilt, 2.49],
-        [0.15 + tilt, 2.53],
-      ],
-      "#aaceb1",
-    );
+    rect(-0.03 + tilt, 2.88, 0.035, 0.4, "#a4b4a2");
+    rect(-0.37 + tilt, 2.68, 0.68, 0.025, "#a4b4a2");
     rect(0.45 + tilt, 2.37, 0.08, 0.055, "#c7b276");
     line(
       [
@@ -208,6 +199,27 @@ export function drawMachine(o, tools, state, time) {
     for (let i = 0; i < 3; i++)
       rect(-0.3, 0.65 - i * 0.06, i === 2 ? 0.35 : 0.6, 0.02, "#616e53");
     glow(0.66, 0.4, 0.035, state.letterSent ? "#c6d896" : "#918a60");
+    // Its receipt is a tongue; the length changes after a message is swallowed.
+    const receipt = state.letterSent ? 0.56 : 0.26;
+    rect(-0.18 + tilt, 2.42, 0.36, receipt, "#c6bea0");
+    line(
+      [
+        [-0.11 + tilt, 2.31],
+        [0.08 + tilt, 2.31],
+      ],
+      "#5d6754",
+      1,
+    );
+    line(
+      [
+        [0.5 + tilt, 3.08],
+        [0.73 + tilt, 3.4],
+        [0.92 + tilt, 3.28],
+      ],
+      "#766d52",
+      2,
+    );
+    ellipse(0.93 + tilt, 3.28, 0.07, 0.07, "#c1a766");
     return true;
   }
   if (o.kind === "sleep-terminal") {
@@ -240,7 +252,9 @@ export function drawMachine(o, tools, state, time) {
       ctx.fillRect(tinyX - 2, screen.y - 15, 5, 4);
       ctx.fillRect(tinyX - 1, screen.y - 10, 3, 5);
       ctx.fillStyle = "#dbd1a3";
-      ctx.fillRect(tinyX - 1, screen.y - 14, 1, 1);
+      ctx.fillRect(tinyX - 2, screen.y - 14, 1, 2);
+      ctx.fillStyle = "#c9a767";
+      ctx.fillRect(tinyX + 1, screen.y - 13, 2, 1);
     } else {
       ctx.fillRect(screen.x - 5, screen.y - h / 2, 10, 1);
     }
@@ -287,6 +301,7 @@ export function drawMachine(o, tools, state, time) {
         0.2 + Math.abs(pulse),
         ["#a992a3", "#89b49f", "#a5b67d"][i],
       );
+      rect(x - 0.015, center + 0.15, 0.03, 0.3, "#182e2d");
       rect(x - 0.26, 3.1, 0.52, 0.12, "#9dab8b");
       rect(x - 0.26, 1.61, 0.52, 0.12, "#617a62");
       line(
@@ -386,15 +401,8 @@ export function drawMachine(o, tools, state, time) {
       rect(sign * 0.965 - 0.035, 2.42, 0.07, 0.47, "#263c31");
       for (let i = 0; i < 3; i++)
         rect(sign * 0.965 - 0.028, 2.36 - i * 0.11, 0.056, 0.035, "#809078");
-      line(
-        [
-          [sign * 0.53, 2.94],
-          [sign * 0.6, 3.15],
-        ],
-        darkBrass,
-        4,
-      );
-      ellipse(sign * 0.6, 3.16, 0.08, 0.08, "#b0a577");
+      if (sign < 0)
+        line([[-0.53, 2.94], [-0.78, 3.15], [-0.92, 2.85]], darkBrass, 3);
     }
     const open = state.quiet
       ? state.eyeAwake
@@ -407,9 +415,8 @@ export function drawMachine(o, tools, state, time) {
         -0.2,
         Math.min(0.2, (state.player.x - o.x) * 0.018),
       );
-      ellipse(look, 2.14, 0.29, 0.43 * open, "#bac7a5");
-      ellipse(look + 0.035, 2.14, 0.12, 0.28 * open, "#355f51");
-      if (open > 0.6) glow(look + 0.06, 2.3, 0.045, "#d2e2b5");
+      ellipse(look, 2.14, 0.045, 0.5 * open, "#b4bba0");
+      rect(-0.5, 2.15, 1, 0.02, "#71806c");
     } else
       line(
         [
@@ -421,6 +428,24 @@ export function drawMachine(o, tools, state, time) {
         "#7b927e",
         2,
       );
+    // Small blind lenses make the observer feel manufactured for an unknown anatomy.
+    for (const [x, y] of [
+      [-0.72, 1.46],
+      [0.74, 1.53],
+    ]) {
+      ellipse(x, y, 0.11, 0.09, "#9b8d64");
+      ellipse(x, y, 0.045, 0.04, "#142722");
+    }
+    line(
+      [
+        [-0.3, 2.73],
+        [-0.08, 2.84],
+        [0.15, 2.72],
+        [0.35, 2.82],
+      ],
+      "#7a6e4e",
+      2,
+    );
     return true;
   }
   if (o.kind === "chair") {

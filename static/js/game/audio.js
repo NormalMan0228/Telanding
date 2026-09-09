@@ -2,7 +2,7 @@ import { TRACKS, hz, eventFor } from "./tracks.js";
 const PREFS = "telemera.audio.v1";
 const OUTPUT_GAIN = 5.5;
 /** Original score, scheduled on the audio clock. No autoplay or network audio. */
-export function createAudio({ say, button }) {
+export function createAudio({ say, button, fixedTrack = null }) {
   let audio, master, filter, room, wet, noise, analyser, spectrum;
   let pressure = 0,
     violet = false;
@@ -29,7 +29,12 @@ export function createAudio({ say, button }) {
     if (volume && Number.isFinite(saved?.volume))
       volume.value = String(Math.max(0, Math.min(100, saved.volume)));
   } catch {}
+  if (fixedTrack) {
+    const fixedIndex = TRACKS.findIndex(t => t.id === fixedTrack);
+    if (fixedIndex >= 0) trackIndex = fixedIndex;
+  }
   function remember() {
+    if (fixedTrack) return;
     try {
       sessionStorage.setItem(
         PREFS,
@@ -238,6 +243,7 @@ export function createAudio({ say, button }) {
     voices.clear();
   }
   function setTrack(id) {
+    if (fixedTrack && id !== fixedTrack) return;
     const index = TRACKS.findIndex((t) => t.id === id);
     if (index < 0) return false;
     trackIndex = index;

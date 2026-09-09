@@ -99,8 +99,8 @@ test("a floor click inside solid furniture is rejected without corrupting the ol
 });
 test("diagonal paths do not cut furniture corners", () => {
   const s = createState();
-  s.player.x = -6;
-  s.player.z = -3;
+  s.player.x = -6.5;
+  s.player.z = -0.7;
   const path = findPath(s, { x: -4, z: -0.3 });
   assert.notEqual(path, null);
   assert.ok(follow(s, path));

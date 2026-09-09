@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Telemera{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{{ url_for('static', filename='css/explorer.css') }}"><link rel="stylesheet" href="{{ url_for('static', filename='css/stages.css') }}"><link rel="stylesheet" href="{{ url_for('static', filename='css/landing.css') }}">{% endblock %}
+{% block scripts %}<script type="module" src="{{ url_for('static', filename='js/entry/index.js') }}"></script>{% endblock %}
+{% block content %}
+<section class="entry-apparatus" aria-label="Telemera 진입 장치">
+  <canvas id="entry-machine" width="720" height="600" aria-hidden="true"></canvas>
+  <p id="entry-help" class="sr-only">세 패널을 순서와 관계없이 맞추세요. 중앙 회전축을 각각 표시된 오른쪽, 왼쪽, 아래 방향에 맞춥니다. 왼쪽 끊어진 회로 세 개를 눌러 수평으로 연결합니다. 오른쪽 슬라이더 두 개를 표시된 30, 70 눈금에 맞춥니다.</p>
+  <button class="machine-hit axis-a" data-axis="0" aria-label="첫 번째 회전축, 현재 0" aria-describedby="entry-help"></button>
+  <button class="machine-hit axis-b" data-axis="1" aria-label="두 번째 회전축, 현재 0" aria-describedby="entry-help"></button>
+  <button class="machine-hit axis-c" data-axis="2" aria-label="세 번째 회전축, 현재 0" aria-describedby="entry-help"></button>
+  <button class="machine-hit circuit-a" data-contact="0" aria-label="위 회로 연결" aria-pressed="false"></button>
+  <button class="machine-hit circuit-b" data-contact="1" aria-label="가운데 회로 연결" aria-pressed="false"></button>
+  <button class="machine-hit circuit-c" data-contact="2" aria-label="아래 회로 연결" aria-pressed="false"></button>
+  <input class="alignment-slider slider-a" data-slider="0" type="range" min="0" max="100" step="5" value="0" aria-label="위 슬라이더, 목표 30">
+  <input class="alignment-slider slider-b" data-slider="1" type="range" min="0" max="100" step="5" value="100" aria-label="아래 슬라이더, 목표 70">
+  <button id="entry-radio" class="machine-hit radio-contact" aria-label="오디오 창 열기"></button>
+  <a class="machine-hit aperture-a" id="entry-play" href="{{ url_for('explore') }}" aria-label="플레이 입구" aria-disabled="true" tabindex="-1"></a>
+  <a class="machine-hit aperture-b" id="entry-games" href="{{ url_for('games') }}" aria-label="게임 정보 보관함" aria-disabled="true" tabindex="-1"></a>
+  <output id="entry-status" class="sr-only" aria-live="polite"></output>
+</section>
+<section id="entry-audio" class="entry-audio" aria-label="오디오 창">
+  <div class="audio-window-bar"><span>AUDIO</span><button id="audio-close" aria-label="오디오 창 닫기">×</button></div>
+  <div class="radio-player">
+    <button id="sound" aria-pressed="false" aria-label="음악 재생 또는 일시정지">▶ PLAY</button>
+    <span id="audio-time" class="audio-time">00:00</span>
+    <label class="volume-control">VOL <input id="volume" type="range" min="0" max="100" value="35" aria-label="음량"></label>
+  </div>
+</section>
+{% endblock %}

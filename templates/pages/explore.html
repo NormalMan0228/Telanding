@@ -2,19 +2,38 @@
 {% block styles %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/explorer.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/devices.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/stages.css') }}">
 {% endblock %}
 {% block scripts %}
 <script type="module" src="{{ url_for('static', filename='js/game/index.js') }}"></script>
+<script type="module" src="{{ url_for('static', filename='js/stages/index.js') }}"></script>
 {% endblock %}
 {% block content %}
-<h1 class="sr-only">Telemera — 작은 기계와 아직 태어나지 않은 게임들</h1>
+<h1 class="sr-only">Telemera</h1>
+<section id="stage-interface" aria-label="스테이지">
+  <div class="stage-controls">
+    <span id="stage-number">STAGE 01 / 03</span>
+    <button id="stage-video-open" class="stage-video-button" disabled>영상 잠김</button>
+  </div>
 <div class="landing-instrument">
   <div class="play-column">
     {% include 'partials/game-view.html' %}
     {% include 'partials/radio-player.html' %}
   </div>
-  {% include 'partials/devices.html' %}
+  <aside id="stage-panel" class="stage-panel" aria-label="스테이지 제어 패널"></aside>
 </div>
-{% include 'partials/game-cabinet.html' %}
+</section>
+<dialog id="stage-video-dialog" aria-label="스테이지 영상">
+  <button id="stage-video-close" class="stage-video-close" aria-label="영상 닫기">닫기 ×</button>
+  <video id="stage-video" controls playsinline preload="none"></video>
+</dialog>
+<dialog id="stage-transition" aria-labelledby="transition-title">
+  <h2 id="transition-title">02</h2>
+  <div class="transfer-device"><span aria-hidden="true">○ ━━━━━ ●</span>
+    <label for="transfer-lever">연결</label>
+    <input id="transfer-lever" type="range" min="0" max="100" value="0" aria-label="다음 스테이지 연결 레버">
+  </div>
+  <button id="transfer-close">닫기</button>
+</dialog>
 {% include 'partials/dialog.html' %}
 {% endblock %}
