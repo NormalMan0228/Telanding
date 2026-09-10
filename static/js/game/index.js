@@ -31,6 +31,8 @@ window.addEventListener("resize", resizeCanvas);
 const $ = (id) => document.getElementById(id);
 export const state = createState();
 restoreSession(state);
+state.directControl = Boolean(document.getElementById("stage-panel"));
+state.waypoints = [];state.pendingAction = state.walkTarget = null;
 state.angle = 0;
 state.cameraX = state.player.x;
 const { show, element: dialog } = createDialog({
@@ -100,7 +102,7 @@ $("motion").onclick = () => {
 };
 function activate(id) {
   const object = roomObjects(state).find((item) => item.id === id);
-  if (object) {
+  if (object && !state.directControl) {
     const dx = object.x - state.player.x,
       dz = object.z - state.player.z;
     if (Math.hypot(dx, dz) > 0.001) state.player.heading = Math.atan2(dz, dx);
@@ -176,10 +178,15 @@ canvas.addEventListener("pointermove", (e) => {
 canvas.addEventListener("pointerleave", () => (state.hoverObject = null));
 canvas.addEventListener("click", (e) => {
   canvas.focus({ preventScroll: true });
-  if (dialog.open || !state.powered) return;
+  if (dialog.open || !state.powered || state.videoActive || state.introActive) return;
   const point = pointerPosition(e),
     object = objectAtPoint(point),
     target = object ?? unproject(point.x, point.y);
+  if(state.directControl) {
+    if(object?.pickKind === "object") activate(object.id);
+    else if(object?.pickKind === "fragment") {state.gems[Number(object.id.split("-")[1])].taken=true;say("기록 조각 회수");}
+    return;
+  }
   if (object?.pickKind === "object" && proximity(state.player, object) < 1) {
     activate(object.id);
     return;
@@ -190,7 +197,7 @@ canvas.addEventListener("click", (e) => {
 function frame(now) {
   const dt = state.last ? Math.min((now - state.last) / 1000, 0.04) : 0;
   state.last = now;
-  if (!document.hidden && !dialog.open && state.powered && !state.introActive && !state.videoActive) {
+  if (!state.directControl && !document.hidden && !dialog.open && state.powered && !state.introActive && !state.videoActive) {
     let dx = 0,
       dz = 0;
     if (state.keys.has("ArrowUp") || state.keys.has("w")) dz--;
@@ -252,6 +259,11 @@ function frame(now) {
   } else if (!document.hidden) {
     advanceLocomotion(state.player, state.player.x, state.player.z, dt);
     state.wasMoving = false;
+  }
+  if(state.directControl) {
+    state.activeObject=roomObjects(state).find(o=>o.id===state.hoverObject)??null;
+    if(now>state.captionUntil) $("scene-caption").textContent=state.activeObject?.label??"장치를 클릭해 조사·조작하세요";
+    state.transition=Math.max(0,state.transition-dt);
   }
   if (!document.hidden && state.powered) {
     state.clock += state.quiet ? 0 : dt;

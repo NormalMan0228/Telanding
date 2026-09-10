@@ -18,17 +18,18 @@ def load_catalog():
 
 @app.get('/')
 def landing():
-    return render_template('pages/foyer.html')
+    site = json.loads((Path(app.root_path) / 'content' / 'site.json').read_text(encoding='utf-8'))
+    return render_template('pages/home.html', site=site)
 
 
 @app.get('/chamber')
 def chamber():
-    return render_template('pages/landing.html')
+    return redirect(url_for('landing'))
 
 
 @app.get('/play')
 def explore():
-    return render_template('pages/explore.html')
+    return redirect(url_for('landing'))
 
 @app.get('/main')
 def main():
@@ -36,15 +37,15 @@ def main():
 
 @app.get('/records')
 def records():
-    return render_template('pages/records.html')
+    return redirect(url_for('landing', _anchor='unannounced'))
 
 @app.get('/about')
 def about():
-    return render_template('pages/about.html')
+    return redirect(url_for('landing'))
 
 @app.get('/games')
 def games():
-    return render_template('pages/games.html')
+    return redirect(url_for('landing', _anchor='games'))
 
 
 @app.errorhandler(404)

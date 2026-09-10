@@ -48,3 +48,13 @@
 #stage-video-dialog video { width: 100%; max-height: 80vh; display: block; }
 .stage-video-close { display: block; margin-left: auto; background: transparent; color: inherit; border: 0; padding: 10px; font: inherit; cursor: pointer; }
 @media(max-width:600px) { .stage-controls { gap:8px; } .stage-tabs { gap:5px; } .stage-tabs button,.stage-video-button { padding:10px; font-size:12px; } }
+
+/* The stage is operated by the viewer, without a walking avatar. */
+#stage-interface .dpad,#stage-interface #interact{display:none}
+#stage-interface .game-bottom>span{font-size:0}
+#stage-interface .game-bottom>span::after{content:"POINT & CLICK · 장치 직접 조작";font:12px var(--mono);color:#b9d8dc}
+#stage-interface .game-bottom>span>*{display:none}
+.observation-console{padding:18px;background:#202d3b;border:1px solid #637f8c;color:#d0dedf}
+.observation-console p{margin:0 0 16px;font-size:13px;line-height:1.7}
+.camera-control{display:flex;align-items:center;gap:12px;font-size:12px}.camera-control input{flex:1;min-width:0;accent-color:#c7a4dc}
+.device-shortcuts{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}.device-shortcuts button{padding:10px 12px;background:#314859;border:1px solid #7798a5;color:#e2e5da;font-size:12px}.device-shortcuts button:hover{background:#53607c;border-color:#d4b9e9}

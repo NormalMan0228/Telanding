@@ -390,7 +390,7 @@ export function createRenderer(canvas, state) {
       x: o.x,
       z: o.z,
       draw: () => {
-        const near = o.label && proximity(state.player, o) < 1;
+        const near = o.label && (state.directControl ? state.hoverObject===o.id : proximity(state.player, o) < 1);
         const mainContext = ctx;
         if (near) {
           if (
@@ -426,7 +426,7 @@ export function createRenderer(canvas, state) {
         .filter((g) => g.room === state.world && !g.taken && visible(g.x))
         .map((g) => ({ x: g.x, z: g.z, draw: () => drawGem(g, t) })),
     );
-    items.push({
+    if(!state.directControl) items.push({
       x: state.player.x,
       z: state.player.z,
       draw: () => drawPlayer(t, moving),

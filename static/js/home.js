@@ -1,0 +1,4 @@
+const tuner=document.getElementById('frequency');
+const signals=[{value:923,text:'문은 안쪽에서 잠근 적이 없다.'},{value:987,text:'명단에는 당신의 이름이 먼저 적혀 있었다.'},{value:1046,text:'다음 신호가 오면, 대답하지 말 것.'}];
+const found=new Set();
+tuner.addEventListener('input',()=>{const value=Number(tuner.value);const frequency=(value/10).toFixed(1);document.getElementById('frequency-value').textContent=frequency;document.getElementById('frequency-label').textContent=frequency+' MHz';const index=signals.findIndex(signal=>Math.abs(signal.value-value)<=3);document.getElementById('signal-state').textContent=index<0?'주파수 탐색 중':'신호 수신';document.getElementById('transmission').textContent=index<0?'…잡음 사이에 무언가 섞여 있다.':signals[index].text;if(index>=0){found.add(index);const indicator=document.querySelector('[data-signal="'+index+'"]');indicator.textContent='0'+(index+1)+' / 수신됨';indicator.classList.add('found');}});

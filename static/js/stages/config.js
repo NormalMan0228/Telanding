@@ -45,8 +45,12 @@ export function finishVideo(progress,id) {
   if(!progress.watched.includes(id))progress.watched.push(id);
   return true;
 }
+export function canTransfer(progress) {
+  const stage=STAGES.find(s=>s.id===progress.active);
+  return Boolean(stage&&progress.completed.includes(stage.id)&&(!stage.video||progress.watched.includes(stage.id)));
+}
 export function advanceStage(progress, devicePosition) {
-  if(!progress.watched.includes(progress.active)||devicePosition<98)return false;
+  if(!canTransfer(progress)||devicePosition<98)return false;
   const index=STAGES.findIndex(s=>s.id===progress.active);
   if(index<0||index===STAGES.length-1)return false;
   progress.active=STAGES[index+1].id;

@@ -3,7 +3,7 @@ import { roomObjects } from "./config.js";
 /** Screen hit regions follow the same projected feet and heights as rendering. */
 export function pickTarget(state, project, point, unit = 40) {
   const objects = roomObjects(state)
-    .filter((o) => o.label)
+    .filter((o) => o.label && (!state.directControl || o.kind !== "door"))
     .map((o) => ({ ...o, pickKind: "object" }));
   const papers = state.gems.flatMap((g, index) =>
     g.room === state.world && !g.taken

@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { STAGES, createProgress, collectClue, evaluateStage, playableVideo, finishVideo, advanceStage, changeInput } from "../static/js/stages/config.js";
+import { STAGES, createProgress, collectClue, evaluateStage, playableVideo, finishVideo, advanceStage, canTransfer, changeInput } from "../static/js/stages/config.js";
 test("each stage requires its own discovered clues and matching panel input",()=>{
   assert.equal(STAGES.length,3);
   for(const stage of STAGES){
@@ -38,18 +38,25 @@ test("coupled dials can reach the inferred solution through actual controls",()=
   for(const value of [0,2,1,1,0,2])changeInput(p,value);
   assert.deepEqual(p.inputs["03"],STAGES[2].solution);
 });
-test("completion alone cannot skip video or the transfer device; final stage never wraps",()=>{
+test("stages without video allow transfer after completion; final stage never wraps",()=>{
   const p=createProgress();
   assert.equal(finishVideo(p,"01"),false);
   assert.equal(advanceStage(p,100),false);
   for(const stage of STAGES){
     assert.equal(p.active,stage.id);
     p.completed.push(stage.id);
-    assert.equal(advanceStage(p,100),false);
+    assert.equal(canTransfer(p),true);
+    assert.equal(advanceStage(p,20),false);
     assert.equal(finishVideo(p,"other"),false);
     assert.equal(finishVideo(p,stage.id),true);
     assert.equal(advanceStage(p,20),false);
     assert.equal(advanceStage(p,100),stage.id!=="03");
   }
   assert.equal(p.active,"03");
+});
+
+test("configured video still requires watching before transfer",()=>{
+ const p=createProgress();p.completed.push("01");
+ const original=STAGES[0].video;
+ try { STAGES[0].video="/static/videos/01.mp4"; assert.equal(canTransfer(p),false);assert.equal(advanceStage(p,100),false);finishVideo(p,"01");assert.equal(canTransfer(p),true); } finally {STAGES[0].video=original;}
 });

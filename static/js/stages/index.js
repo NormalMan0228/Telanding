@@ -1,5 +1,6 @@
-import { state } from "../game/index.js";
-import { STAGES, SYMBOLS, collectClue, evaluateStage, playableVideo, finishVideo, advanceStage, changeInput } from "./config.js";
+import { roomObjects } from "../game/config.js";
+import { state, activate } from "../game/index.js";
+import { STAGES, SYMBOLS, collectClue, evaluateStage, playableVideo, finishVideo, advanceStage, canTransfer, changeInput } from "./config.js";
 import {restoreProgress,saveProgress} from "./checkpoint.js";
 
 const progress=restoreProgress();
@@ -55,7 +56,7 @@ function renderPanel() {
   }
   panel.append(strip);
   const status=document.createElement("output");status.id="panel-status";status.setAttribute("aria-live","polite");
-  status.textContent=progress.completed.includes(stage.id)?(stage.video?"영상 해금":"영상 미등록"):progress.clues[stage.id].length+" / 3";
+  status.textContent=progress.completed.includes(stage.id)?(stage.video?"퍼즐 완료 · 영상 해금":"퍼즐 완료 · 이동 가능"):progress.clues[stage.id].length+" / 3";
   panel.append(status);
   if(stage.panel==="switches"){
     const meter=document.createElement("output");meter.className="panel-meter";
@@ -66,8 +67,8 @@ function renderPanel() {
 }
 function updateVideoButton() {
   const stage=current(),complete=progress.completed.includes(stage.id);
-  videoButton.disabled=!complete||!stage.video;
-  videoButton.textContent=progress.watched.includes(stage.id)&&stage.id!=="03"?"다음 스테이지":complete?(stage.video?"영상 재생":"영상 미등록"):"영상 잠김";
+  videoButton.disabled=!complete;
+  videoButton.textContent=canTransfer(progress)?(stage.id==="03"?"탐험 완료":"다음 스테이지"):complete?"영상 재생":"영상 잠김";
 }
 panel.addEventListener("click",event=>{
   const button=event.target.closest("button");
@@ -85,6 +86,7 @@ panel.addEventListener("click",event=>{
   if(solved&&playableVideo(progress,stage.id))playVideo();
 });
 state.onInspect=id=>{
+  if(id==="sign"){state.showHint?.("장치를 직접 클릭해 단서를 읽습니다. 아래 시야 슬라이더로 방을 둘러보고, 장치 선택 버튼으로 바로 조작할 수도 있습니다. 단서를 모아 제어 패널을 맞추세요.");return true;}
   if(id==="attendant"){
     const hints={
       "01":"세 식으로 다이얼의 값을 구합니다.\n다이얼을 누르면 자신과 바로 다음 다이얼이 함께 한 칸 움직입니다.",
@@ -119,8 +121,24 @@ function enterStage(preservePosition=false) {
   document.getElementById("world-number").textContent="STAGE "+stage.id;
   document.getElementById("world-name").textContent="";
   document.getElementById("scene-caption").textContent="";
+  state.cameraX=-10;
+  const pan=document.getElementById("camera-pan");pan.value=String(state.cameraX);
+  const shortcuts=document.getElementById("device-shortcuts");shortcuts.replaceChildren();
+  roomObjects(state).filter(o=>o.label&&o.kind!=="door"&&o.id!=="sign").forEach((object,i)=>{
+    const button=document.createElement("button");button.type="button";
+    button.textContent=String(i+1).padStart(2,"0")+" · "+object.label;
+    button.addEventListener("click",()=>{
+      if(state.videoActive)return;
+      state.cameraX=Math.max(-14,Math.min(14,object.x));pan.value=String(state.cameraX);
+      state.hoverObject=object.id;activate(object.id);
+    });
+    shortcuts.append(button);
+  });
   renderPanel();
 }
+document.getElementById("camera-pan").addEventListener("input",event=>{
+  if(!state.videoActive)state.cameraX=Number(event.target.value);
+});
 function showTransfer() {
   pauseGame(true);lever.value="0";
   document.getElementById("transition-title").textContent=progress.active==="03"?"03 / 완료":"STAGE "+STAGES[STAGES.findIndex(s=>s.id===progress.active)+1].id;
@@ -134,7 +152,7 @@ function playVideo() {
   video.play().catch(()=>{document.getElementById("panel-status").textContent="재생 버튼을 눌러주세요";});
 }
 videoButton.addEventListener("click",()=>{
-  if(progress.watched.includes(progress.active)&&progress.active!=="03")showTransfer();else playVideo();
+  if(canTransfer(progress))showTransfer();else playVideo();
 });
 document.getElementById("stage-video-close").addEventListener("click",()=>videoDialog.close());
 video.addEventListener("error",()=>{document.getElementById("panel-status").textContent="영상을 불러올 수 없습니다";});
@@ -149,7 +167,7 @@ videoDialog.addEventListener("close",()=>{
 });
 lever.addEventListener("change",()=>{
   const value=Number(lever.value);
-  if(value<98||!progress.watched.includes(progress.active))return;
+  if(value<98||!canTransfer(progress))return;
   if(progress.active==="03"){transfer.close();return;}
   if(advanceStage(progress,value)){transfer.close();enterStage();document.getElementById("world").focus();}
 });

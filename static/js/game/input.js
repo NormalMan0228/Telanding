@@ -38,6 +38,7 @@ export function setupInput({ canvas, state, interact }) {
   canvas.addEventListener("keydown", (event) => {
     if (event.ctrlKey || event.metaKey || event.altKey) return;
     const key = normalize(event.key);
+    if(state.directControl && (movement.has(key)||key==="e")) return;
     if (movement.has(key)) {
       event.preventDefault();
       manual();
